@@ -4,7 +4,7 @@
  */
 
 import { appState, emit, on } from './appState.js';
-import { processData, runEDA, computeAggregates, applyFilters } from './dataProcessor.js';
+import { processData, runEDA, computeAggregates } from './dataProcessor.js';
 import { renderHeroCards, renderKpiGrid, renderStoryStats, renderConclusionCards, updateSampleCounter } from './kpiCards.js';
 import { initFilters } from './filters.js';
 import { initBarChart }      from './charts/barChart.js';
@@ -51,19 +51,29 @@ function showError(msg) {
 
 showLoader();
 
-Papa.parse('data/remote_work_mental_health.csv', {
-  header:        true,
-  download:      true,    // required: tells PapaParse to fetch the URL, not parse the string
-  dynamicTyping: false,   // keep as strings, we cast manually in processData
-  skipEmptyLines: true,
-  complete: ({ data: rawRows, errors }) => {
+// Use fetch() for reliable cross-origin CSV loading on GitHub Pages,
+// then hand the text to PapaParse for parsing.
+fetch('data/remote_work_mental_health.csv')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} ${response.statusText} — CSV file not found at data/remote_work_mental_health.csv`);
+    }
+    return response.text();
+  })
+  .then(csvText => {
+    const { data: rawRows, errors } = Papa.parse(csvText, {
+      header:        true,
+      dynamicTyping: false,
+      skipEmptyLines: true
+    });
+
     if (errors.length) {
       console.warn('[CSV parse warnings]', errors.slice(0, 5));
     }
 
     if (!rawRows?.length) {
       hideLoader();
-      showError('CSV file parsed but no rows were found. Check the file path.');
+      showError('CSV parsed but returned 0 rows. The file may be empty or malformed.');
       return;
     }
 
@@ -74,12 +84,11 @@ Papa.parse('data/remote_work_mental_health.csv', {
       hideLoader();
       showError(`App initialization failed: ${err.message}`);
     }
-  },
-  error: (err) => {
+  })
+  .catch(err => {
     hideLoader();
-    showError(`Could not fetch the CSV file: ${err.message || err}. Make sure you are running on a local server or GitHub Pages.`);
-  }
-});
+    showError(`Could not load CSV: ${err.message}`);
+  });
 
 // ─── App initialization ───────────────────────────────────────────────────
 
