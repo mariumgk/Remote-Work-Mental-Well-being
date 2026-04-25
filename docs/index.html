@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Human Side of Remote Work</title>
+  <meta name="description" content="An interactive data visualization exploring associations between remote work and employee mental health across 5,000 employees." />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/charts.css" />
+  <link rel="stylesheet" href="css/filters.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════
+       HERO SECTION
+  ════════════════════════════════════════════════════ -->
+  <header class="hero" role="banner">
+    <div class="hero__inner">
+      <div class="hero__text">
+        <p class="hero__eyebrow">Interactive Data Dashboard · 5,000 Employees</p>
+        <h1 class="hero__title">The Human Side of Remote Work</h1>
+        <p class="hero__subtitle">
+          Exploring associations between work location, workload, company support,
+          and employee mental health across six global regions.
+        </p>
+        <p class="hero__methodology">
+          <span class="methodology-icon" aria-hidden="true">⚠</span>
+          <em>This dashboard shows patterns and associations in the dataset.
+          It does not prove that remote work causes mental health outcomes.</em>
+        </p>
+      </div>
+      <div class="hero__cards" id="hero-cards" aria-label="Key dataset highlights">
+        <!-- Populated by kpiCards.js -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════
+       OVERVIEW KPI SECTION
+  ════════════════════════════════════════════════════ -->
+  <section class="overview" aria-labelledby="overview-heading">
+    <div class="section-inner">
+      <h2 id="overview-heading" class="section-title">Dataset at a Glance</h2>
+      <div class="kpi-grid" id="kpi-grid" role="list" aria-label="Key performance indicators">
+        <!-- Populated by kpiCards.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       MAIN DASHBOARD
+  ════════════════════════════════════════════════════ -->
+  <main class="dashboard" id="dashboard" aria-labelledby="dashboard-heading">
+    <h2 id="dashboard-heading" class="sr-only">Interactive Dashboard</h2>
+
+    <!-- Filter Panel -->
+    <aside class="filter-panel" id="filter-panel" aria-label="Data filters">
+      <div class="filter-panel__header">
+        <h3 class="filter-panel__title">Filters</h3>
+        <button class="btn-reset" id="btn-reset-filters" aria-label="Reset all filters">
+          Reset All
+        </button>
+      </div>
+      <div class="filter-panel__body" id="filter-panel-body">
+        <!-- Populated by filters.js -->
+      </div>
+    </aside>
+
+    <!-- Mobile filter toggle -->
+    <button class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filter-panel">
+      <span class="filter-toggle__icon" aria-hidden="true">⚙</span> Filters
+    </button>
+
+    <!-- Chart Area -->
+    <div class="chart-area" id="chart-area">
+
+      <!-- Control Bar -->
+      <div class="control-bar" role="group" aria-label="Chart display controls">
+        <div class="control-group" id="control-colorby">
+          <label class="control-label" id="colorby-label">Color By</label>
+          <div class="segmented-control" role="radiogroup" aria-labelledby="colorby-label">
+            <button class="seg-btn active" data-encode="Stress_Level" role="radio" aria-checked="true">Stress</button>
+            <button class="seg-btn" data-encode="Sleep_Quality" role="radio" aria-checked="false">Sleep</button>
+            <button class="seg-btn" data-encode="Work_Location" role="radio" aria-checked="false">Work Mode</button>
+            <button class="seg-btn" data-encode="Productivity_Change" role="radio" aria-checked="false">Productivity</button>
+          </div>
+        </div>
+
+        <div class="control-group" id="control-groupby">
+          <label class="control-label" for="select-groupby">Group Bars By</label>
+          <select id="select-groupby" class="control-select" aria-label="Bar chart grouping dimension">
+            <option value="Work_Location">Work Mode</option>
+            <option value="Industry">Industry</option>
+            <option value="Job_Role">Job Role</option>
+            <option value="Age_Group">Age Group</option>
+          </select>
+        </div>
+
+        <div class="control-group" id="control-heatmap-metric">
+          <label class="control-label" for="select-heatmap-metric">Heatmap Metric</label>
+          <select id="select-heatmap-metric" class="control-select" aria-label="Heatmap color metric">
+            <option value="avgStress">Avg Stress Score</option>
+            <option value="avgIsolation">Avg Isolation</option>
+            <option value="avgWLB">Avg Work-Life Balance</option>
+          </select>
+        </div>
+
+        <div class="control-group" id="control-heatmap-rows">
+          <label class="control-label" for="select-heatmap-rows">Heatmap Rows</label>
+          <select id="select-heatmap-rows" class="control-select" aria-label="Heatmap row dimension">
+            <option value="Job_Role">Job Role</option>
+            <option value="Industry">Industry</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sample counter -->
+      <div class="sample-counter" id="sample-counter" role="status" aria-live="polite">
+        <span id="sample-count">5,000</span> employees shown
+        <span class="sample-warning" id="sample-warning" hidden aria-label="Small sample warning">
+          ⚠ Small sample — interpret with caution
+        </span>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+
+        <!-- Sankey — full width row -->
+        <section class="chart-panel chart-panel--full" id="panel-sankey" aria-labelledby="sankey-title">
+          <div class="chart-panel__header">
+            <h3 class="chart-panel__title" id="sankey-title">Work Mode → Stress → Productivity → Satisfaction</h3>
+            <div class="chart-panel__controls">
+              <button class="toggle-btn active" id="sankey-mode-abs" aria-pressed="true">Counts</button>
+              <button class="toggle-btn" id="sankey-mode-prop" aria-pressed="false">Proportions</button>
+            </div>
+          </div>
+          <p class="chart-caption">Flow width represents the number of employees along each pathway. Click a node to select that group.</p>
+          <div class="chart-container" id="chart-sankey" role="img" aria-label="Sankey flow diagram showing employee pathways from work mode through stress level to productivity change and satisfaction"></div>
+        </section>
+
+        <!-- Bar Chart -->
+        <section class="chart-panel" id="panel-bar" aria-labelledby="bar-title">
+          <div class="chart-panel__header">
+            <h3 class="chart-panel__title" id="bar-title">Stress Distribution by Group</h3>
+            <div class="chart-panel__controls">
+              <button class="toggle-btn active" id="bar-mode-stacked" aria-pressed="true">Stacked</button>
+              <button class="toggle-btn" id="bar-mode-grouped" aria-pressed="false">Grouped</button>
+            </div>
+          </div>
+          <p class="chart-caption">Click a bar segment to select that group and cross-highlight other charts.</p>
+          <div class="chart-container" id="chart-bar" role="img" aria-label="Bar chart showing stress level distribution by selected grouping dimension"></div>
+        </section>
+
+        <!-- Heatmap -->
+        <section class="chart-panel" id="panel-heatmap" aria-labelledby="heatmap-title">
+          <div class="chart-panel__header">
+            <h3 class="chart-panel__title" id="heatmap-title">Role × Work Mode Heatmap</h3>
+          </div>
+          <p class="chart-caption">Color intensity indicates the selected metric. Click a cell to select that combination.</p>
+          <div class="chart-container" id="chart-heatmap" role="img" aria-label="Heatmap showing average metrics by job role and work mode"></div>
+        </section>
+
+        <!-- Scatter Plot -->
+        <section class="chart-panel" id="panel-scatter" aria-labelledby="scatter-title">
+          <div class="chart-panel__header">
+            <h3 class="chart-panel__title" id="scatter-title">Hours Worked vs Social Isolation</h3>
+            <div class="chart-panel__controls">
+              <button class="toggle-btn active" id="scatter-mode-agg" aria-pressed="true">Summary</button>
+              <button class="toggle-btn" id="scatter-mode-ind" aria-pressed="false">Individual</button>
+            </div>
+          </div>
+          <p class="chart-caption">Bubble size reflects virtual meeting count. Color reflects selected encoding. Click bubbles to select groups.</p>
+          <div class="chart-container" id="chart-scatter" role="img" aria-label="Scatter plot showing hours worked per week versus social isolation rating"></div>
+        </section>
+
+        <!-- Regional Chart -->
+        <section class="chart-panel" id="panel-regional" aria-labelledby="regional-title">
+          <div class="chart-panel__header">
+            <h3 class="chart-panel__title" id="regional-title">Regional Comparison</h3>
+            <div class="chart-panel__controls">
+              <select id="select-regional-metric" class="control-select control-select--sm" aria-label="Regional metric to display">
+                <option value="avgStress">Avg Stress</option>
+                <option value="sleepGoodRate">Good Sleep %</option>
+                <option value="accessRate">Mental Health Access %</option>
+                <option value="highRiskRate">High Risk %</option>
+              </select>
+            </div>
+          </div>
+          <p class="chart-caption">Click a region bar to filter the dashboard to that region.</p>
+          <div class="chart-container" id="chart-regional" role="img" aria-label="Horizontal bar chart comparing regions across wellness metrics"></div>
+        </section>
+
+      </div><!-- /.charts-grid -->
+    </div><!-- /.chart-area -->
+  </main>
+
+  <!-- Detail Panel (slide-in) -->
+  <aside class="detail-panel" id="detail-panel" aria-label="Selection details" aria-hidden="true" role="complementary">
+    <div class="detail-panel__inner">
+      <button class="detail-panel__close" id="detail-panel-close" aria-label="Close detail panel">✕</button>
+      <div id="detail-panel-content">
+        <!-- Populated by detailPanel.js -->
+      </div>
+    </div>
+  </aside>
+  <div class="detail-panel__overlay" id="detail-panel-overlay" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════════════
+       STORY SECTIONS
+  ════════════════════════════════════════════════════ -->
+  <div class="stories" aria-label="Key findings">
+
+    <section class="story story--left" aria-labelledby="story1-heading">
+      <div class="story__text">
+        <h2 id="story1-heading" class="story__title">Work Mode &amp; Stress Patterns</h2>
+        <p class="story__body">
+          Across all 5,000 employees, stress levels are distributed across all three work arrangements —
+          remote, hybrid, and onsite. The data shows that <strong>high stress is not exclusive to any
+          single work mode</strong>. However, patterns emerge when we layer in additional factors like
+          company support, sleep quality, and hours worked.
+        </p>
+        <div class="story__stats" id="story-stats-1" aria-label="Work mode stress statistics">
+          <!-- Populated by kpiCards.js after data loads -->
+        </div>
+      </div>
+      <div class="story__visual" aria-hidden="true">
+        <div class="story__chart-ref">↑ See Stress Distribution chart above</div>
+      </div>
+    </section>
+
+    <section class="story story--right" aria-labelledby="story2-heading">
+      <div class="story__text">
+        <h2 id="story2-heading" class="story__title">The Role of Company Support</h2>
+        <p class="story__body">
+          Employees who report <strong>higher company support for remote work</strong> tend to show
+          associations with better work-life balance ratings and lower social isolation scores.
+          This pattern is visible across industries and job roles when you filter by company
+          support level using the controls above.
+        </p>
+        <div class="story__stats" id="story-stats-2" aria-label="Company support statistics">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="story__visual" aria-hidden="true">
+        <div class="story__chart-ref">↑ Try filtering by Company Support in the heatmap</div>
+      </div>
+    </section>
+
+    <section class="story story--left" aria-labelledby="story3-heading">
+      <div class="story__text">
+        <h2 id="story3-heading" class="story__title">Sleep, Isolation &amp; Risk</h2>
+        <p class="story__body">
+          A subset of employees in this dataset shows a clustering of multiple wellbeing concerns
+          simultaneously: high stress, poor sleep, high social isolation, and low work-life balance.
+          These employees are flagged as <strong>"Very High Risk"</strong> in the Risk Level analysis.
+          Use the Scatter Plot's Individual mode to explore their distribution.
+        </p>
+        <div class="story__stats" id="story-stats-3" aria-label="Risk group statistics">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="story__visual" aria-hidden="true">
+        <div class="story__chart-ref">↑ See scatter plot — switch to Individual mode</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       CONCLUSION
+  ════════════════════════════════════════════════════ -->
+  <footer class="conclusion" role="contentinfo">
+    <div class="section-inner">
+      <h2 class="section-title">What the Data Suggests</h2>
+      <div class="conclusion__grid" id="conclusion-grid">
+        <!-- Populated by kpiCards.js -->
+      </div>
+      <div class="conclusion__methodology">
+        <h3 class="conclusion__methodology-title">Methodology &amp; Limitations</h3>
+        <p>
+          This dashboard visualizes a dataset of 5,000 employees across various industries and regions.
+          <strong>This dashboard shows patterns and associations in the dataset. It does not prove
+          that remote work causes mental health outcomes.</strong> The dataset contains
+          <span id="footer-missing-count">1,196</span> employees with unreported mental health conditions
+          and <span id="footer-pa-missing">1,629</span> with unreported physical activity — these are
+          shown as "Not Reported" throughout. All statistics shown reflect the filtered subset of
+          employees currently selected.
+        </p>
+        <p class="conclusion__dataset">
+          Dataset: <em>Impact of Remote Work on Mental Health</em> · 5,000 employees ·
+          20 variables · 6 global regions
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════
+       SCRIPTS — CDN then app modules
+  ════════════════════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12/dist/d3-sankey.min.js"></script>
+
+  <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
