@@ -52,7 +52,8 @@ function showError(msg) {
 showLoader();
 
 Papa.parse('data/remote_work_mental_health.csv', {
-  header:       true,
+  header:        true,
+  download:      true,    // required: tells PapaParse to fetch the URL, not parse the string
   dynamicTyping: false,   // keep as strings, we cast manually in processData
   skipEmptyLines: true,
   complete: ({ data: rawRows, errors }) => {
