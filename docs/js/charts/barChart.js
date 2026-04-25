@@ -10,7 +10,7 @@ import { getColorScale, getColorOrder, STRESS_ORDER } from '../utils/colorScales
 import { showTooltip, hideTooltip, buildTooltip, positionTooltip } from '../utils/tooltips.js';
 import { watchResize } from '../utils/responsive.js';
 
-const MARGIN = { top: 16, right: 16, bottom: 72, left: 58 };
+const MARGIN = { top: 16, right: 16, bottom: 72, left: 62 };
 
 let _svg = null, _g = null, _xScale, _yScale, _colorScale;
 let _width = 0, _height = 0;
@@ -61,10 +61,9 @@ function drawBarChart(container, forceWidth) {
   const colorBy    = appState.encode.colorBy;
   const stackKeys  = STRESS_ORDER; // always stack by stress; encode changes color mapping only
 
-  const rect  = container.getBoundingClientRect();
-  const rawWidth = forceWidth || rect.width || container.offsetWidth || 400;
-  _width  = Math.max(200, rawWidth - MARGIN.left - MARGIN.right);
-  _height = Math.max(220, (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
+  const rect = container.getBoundingClientRect();
+  _width  = Math.max(160, (rect.width  || container.offsetWidth  || 400) - MARGIN.left - MARGIN.right);
+  _height = Math.max(80,  (rect.height || container.offsetHeight || 300) - MARGIN.top  - MARGIN.bottom);
 
   // Create or clear SVG
   d3.select(container).selectAll('*').remove();

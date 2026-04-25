@@ -41,7 +41,7 @@ function drawHeatmap(container) {
   const rect = container.getBoundingClientRect();
   const totalW = rect.width || container.offsetWidth || 380;
   const cellW  = Math.max(32, (totalW - MARGIN.left - MARGIN.right) / colKeys.length);
-  const cellH  = Math.max(22, Math.min(38, (Math.max(260, rect.height || container.offsetHeight || 300) - MARGIN.top - MARGIN.bottom) / rowKeys.length));
+  const cellH  = Math.max(22, Math.min(38, ((rect.height || container.offsetHeight || 220) - MARGIN.top - MARGIN.bottom) / rowKeys.length));
   const width  = cellW * colKeys.length;
   const height = cellH * rowKeys.length;
 

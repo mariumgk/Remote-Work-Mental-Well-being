@@ -53,8 +53,8 @@ function drawRegional(container) {
     : d3.max(data, d => d[metric]) * 1.15;
 
   const rect = container.getBoundingClientRect();
-  const W = Math.max(200, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
-  const H = Math.max(180, (rect.height || container.offsetHeight || 280) - MARGIN.top  - MARGIN.bottom);
+  const W = Math.max(160, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
+  const H = Math.max(80,  (rect.height || container.offsetHeight || 280) - MARGIN.top  - MARGIN.bottom);
 
   d3.select(container).selectAll('*').remove();
 

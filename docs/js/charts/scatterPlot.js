@@ -9,7 +9,7 @@ import { getColorScale, getColorOrder, STRESS_ORDER, WORK_LOCATION_ORDER, SLEEP_
 import { showTooltip, hideTooltip, buildTooltip } from '../utils/tooltips.js';
 import { watchResize } from '../utils/responsive.js';
 
-const MARGIN = { top: 16, right: 24, bottom: 64, left: 52 };
+const MARGIN = { top: 16, right: 24, bottom: 64, left: 62 };
 const MAX_BUBBLE_R = 22;
 const MIN_BUBBLE_R = 5;
 
@@ -53,8 +53,8 @@ function drawAggregateScatter(container) {
   if (!data.length) { container.innerHTML = '<div class="no-data">No data</div>'; return; }
 
   const rect = container.getBoundingClientRect();
-  const W = Math.max(200, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
-  const H = Math.max(220, (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
+  const W = Math.max(160, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
+  const H = Math.max(80,  (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
 
   d3.select(container).selectAll('*').remove();
 
@@ -146,8 +146,8 @@ function drawIndividualScatter(container) {
   if (!rows.length) { container.innerHTML = '<div class="no-data">No data</div>'; return; }
 
   const rect = container.getBoundingClientRect();
-  const W = Math.max(200, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
-  const H = Math.max(220, (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
+  const W = Math.max(160, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
+  const H = Math.max(80,  (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
 
   d3.select(container).selectAll('*').remove();
 
@@ -264,7 +264,7 @@ function drawAxes(g, xScale, yScale, W, H) {
 
   g.append('text').attr('class', 'axis-label')
     .attr('transform', 'rotate(-90)')
-    .attr('x', -H / 2).attr('y', -38).attr('text-anchor', 'middle')
+    .attr('x', -H / 2).attr('y', -46).attr('text-anchor', 'middle')
     .text('Social Isolation Rating');
 }
 
