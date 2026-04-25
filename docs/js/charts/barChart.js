@@ -7,10 +7,10 @@
 import { appState, emit, on } from '../appState.js';
 import { computeBarData } from '../dataProcessor.js';
 import { getColorScale, getColorOrder, STRESS_ORDER } from '../utils/colorScales.js';
-import { showTooltip, hideTooltip, buildTooltip } from '../utils/tooltips.js';
+import { showTooltip, hideTooltip, buildTooltip, positionTooltip } from '../utils/tooltips.js';
 import { watchResize } from '../utils/responsive.js';
 
-const MARGIN = { top: 16, right: 16, bottom: 60, left: 52 };
+const MARGIN = { top: 16, right: 16, bottom: 72, left: 58 };
 
 let _svg = null, _g = null, _xScale, _yScale, _colorScale;
 let _width = 0, _height = 0;
@@ -26,7 +26,7 @@ export function initBarChart() {
   document.getElementById('bar-mode-grouped')?.addEventListener('click', () => setMode('grouped'));
 
   _cleanup = watchResize(container, ({ width }) => {
-    drawBarChart(container, width);
+    if (width > 0) drawBarChart(container, width);
   });
 
   on('filters:changed', () => drawBarChart(container));
@@ -34,7 +34,8 @@ export function initBarChart() {
   on('reconfigure:changed', () => drawBarChart(container));
   on('selection:changed', applyDimming);
 
-  drawBarChart(container);
+  // Defer initial draw to allow layout to settle
+  requestAnimationFrame(() => drawBarChart(container));
 }
 
 function setMode(mode) {
@@ -61,8 +62,9 @@ function drawBarChart(container, forceWidth) {
   const stackKeys  = STRESS_ORDER; // always stack by stress; encode changes color mapping only
 
   const rect  = container.getBoundingClientRect();
-  _width  = (forceWidth || rect.width || 400) - MARGIN.left - MARGIN.right;
-  _height = Math.max(220, (rect.height || 280) - MARGIN.top - MARGIN.bottom);
+  const rawWidth = forceWidth || rect.width || container.offsetWidth || 400;
+  _width  = Math.max(200, rawWidth - MARGIN.left - MARGIN.right);
+  _height = Math.max(220, (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
 
   // Create or clear SVG
   d3.select(container).selectAll('*').remove();
@@ -95,9 +97,11 @@ function drawBarChart(container, forceWidth) {
     .call(d3.axisBottom(_xScale).tickSize(0))
     .call(g => g.select('.domain').attr('stroke', 'var(--border)'))
     .selectAll('text')
-      .attr('transform', groups.some(g => g.length > 8) ? 'rotate(-30)' : 'rotate(0)')
-      .style('text-anchor', groups.some(g => g.length > 8) ? 'end' : 'middle')
-      .attr('dy', groups.some(g => g.length > 8) ? '0.35em' : '1em');
+      .style('font-size', '10px')
+      .attr('dy', groups.some(g => g.length > 8) ? '-0.4em' : '1em')
+      .attr('dx', groups.some(g => g.length > 8) ? '-0.6em' : '0')
+      .attr('transform', groups.some(g => g.length > 8) ? 'rotate(-35)' : 'rotate(0)')
+      .style('text-anchor', groups.some(g => g.length > 8) ? 'end' : 'middle');
 
   _g.append('g').attr('class', 'axis axis--y')
     .call(d3.axisLeft(_yScale).ticks(5).tickFormat(d3.format(',d')))
@@ -113,7 +117,7 @@ function drawBarChart(container, forceWidth) {
   // X-axis label
   _g.append('text').attr('class', 'axis-label')
     .attr('x', _width / 2)
-    .attr('y', _height + MARGIN.bottom - 8)
+    .attr('y', _height + MARGIN.bottom - 6)
     .attr('text-anchor', 'middle')
     .text(groupDim.replace(/_/g, ' '));
 
@@ -159,10 +163,7 @@ function drawStacked(data, keys) {
         })
         .on('mousemove', (event) => {
           const tip = document.querySelector('.d3-tooltip');
-          if (tip) {
-            const { positionTooltip } = tooltipModule();
-            positionTooltip(event, tip);
-          }
+          if (tip) positionTooltip(event, tip);
         })
         .on('mouseout', hideTooltip)
         .on('click', (event, d) => selectGroup(d.data.group))
@@ -242,17 +243,4 @@ function renderLegend(keys, colorBy) {
   });
 }
 
-// Lazy import workaround for tooltip repositioning
-function tooltipModule() {
-  return { positionTooltip: (event, tip) => {
-    const { innerWidth: vw, innerHeight: vh } = window;
-    const margin = 14;
-    const x = event.clientX, y = event.clientY;
-    const tw = tip.offsetWidth || 200, th = tip.offsetHeight || 100;
-    let left = x + margin, top = y + margin;
-    if (left + tw > vw - margin) left = x - tw - margin;
-    if (top  + th > vh - margin) top  = y - th - margin;
-    tip.style.left = `${Math.max(margin, left)}px`;
-    tip.style.top  = `${Math.max(margin, top)}px`;
-  }};
-}
+// end of barChart.js

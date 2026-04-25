@@ -22,11 +22,11 @@ export function initSankey() {
   document.getElementById('sankey-mode-abs')?.addEventListener('click',  () => setSankeyMode('absolute'));
   document.getElementById('sankey-mode-prop')?.addEventListener('click', () => setSankeyMode('proportional'));
 
-  watchResize(container, () => drawSankey(container));
+  watchResize(container, ({ width }) => { if (width > 0) drawSankey(container); });
   on('filters:changed',   () => drawSankey(container));
   on('selection:changed', () => applySankeyDimming(container));
 
-  drawSankey(container);
+  requestAnimationFrame(() => drawSankey(container));
 }
 
 function setSankeyMode(mode) {
@@ -61,8 +61,8 @@ function drawSankey(container) {
   }
 
   const rect = container.getBoundingClientRect();
-  const W = Math.max(400, (rect.width  || 700)) - MARGIN.left - MARGIN.right;
-  const H = Math.max(160, (rect.height || 220)) - MARGIN.top  - MARGIN.bottom;
+  const W = Math.max(400, (rect.width || container.offsetWidth || 700)) - MARGIN.left - MARGIN.right;
+  const H = Math.max(160, (rect.height || container.offsetHeight || 220)) - MARGIN.top  - MARGIN.bottom;
 
   d3.select(container).selectAll('*').remove();
 

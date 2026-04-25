@@ -37,7 +37,7 @@
 }
 
 .filter-panel__body {
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
   flex: 1;
   overflow-y: auto;
 }

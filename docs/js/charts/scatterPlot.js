@@ -9,7 +9,7 @@ import { getColorScale, getColorOrder, STRESS_ORDER, WORK_LOCATION_ORDER, SLEEP_
 import { showTooltip, hideTooltip, buildTooltip } from '../utils/tooltips.js';
 import { watchResize } from '../utils/responsive.js';
 
-const MARGIN = { top: 16, right: 24, bottom: 56, left: 52 };
+const MARGIN = { top: 16, right: 24, bottom: 64, left: 52 };
 const MAX_BUBBLE_R = 22;
 const MIN_BUBBLE_R = 5;
 
@@ -21,12 +21,12 @@ export function initScatterPlot() {
   document.getElementById('scatter-mode-agg')?.addEventListener('click', () => setScatterMode('aggregate'));
   document.getElementById('scatter-mode-ind')?.addEventListener('click', () => setScatterMode('individual'));
 
-  watchResize(container, () => drawScatter(container));
+  watchResize(container, ({ width }) => { if (width > 0) drawScatter(container); });
   on('filters:changed',   () => drawScatter(container));
   on('encode:changed',    () => drawScatter(container));
   on('selection:changed', () => applyScatterDimming(container));
 
-  drawScatter(container);
+  requestAnimationFrame(() => drawScatter(container));
 }
 
 function setScatterMode(mode) {
@@ -53,8 +53,8 @@ function drawAggregateScatter(container) {
   if (!data.length) { container.innerHTML = '<div class="no-data">No data</div>'; return; }
 
   const rect = container.getBoundingClientRect();
-  const W = (rect.width  || 380) - MARGIN.left - MARGIN.right;
-  const H = Math.max(220, (rect.height || 280) - MARGIN.top - MARGIN.bottom);
+  const W = Math.max(200, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
+  const H = Math.max(220, (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
 
   d3.select(container).selectAll('*').remove();
 
@@ -146,8 +146,8 @@ function drawIndividualScatter(container) {
   if (!rows.length) { container.innerHTML = '<div class="no-data">No data</div>'; return; }
 
   const rect = container.getBoundingClientRect();
-  const W = (rect.width  || 380) - MARGIN.left - MARGIN.right;
-  const H = Math.max(220, (rect.height || 280) - MARGIN.top - MARGIN.bottom);
+  const W = Math.max(200, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
+  const H = Math.max(220, (rect.height || container.offsetHeight || 280) - MARGIN.top - MARGIN.bottom);
 
   d3.select(container).selectAll('*').remove();
 
@@ -259,7 +259,7 @@ function drawAxes(g, xScale, yScale, W, H) {
     .call(ax => ax.select('.domain').remove());
 
   g.append('text').attr('class', 'axis-label')
-    .attr('x', W / 2).attr('y', H + 44).attr('text-anchor', 'middle')
+    .attr('x', W / 2).attr('y', H + 52).attr('text-anchor', 'middle')
     .text('Hours Worked Per Week');
 
   g.append('text').attr('class', 'axis-label')

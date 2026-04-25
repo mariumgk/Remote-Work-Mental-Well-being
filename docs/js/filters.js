@@ -24,12 +24,12 @@ function renderFilterPanel(rows) {
     ${checkboxGroup('workLocation', 'Work Mode',
       ['Remote','Hybrid','Onsite'],
       'Work_Location',
-      { Remote: '#9f7aea', Hybrid: '#58a6ff', Onsite: '#38b2ac' }
+      { Remote: '#7c3aed', Hybrid: '#2b7de9', Onsite: '#0d9488' }
     )}
     ${checkboxGroup('stressLevel', 'Stress Level',
       ['Low','Medium','High'],
       'Stress_Level',
-      { Low: '#38b2ac', Medium: '#f6ad55', High: '#fc8181' }
+      { Low: '#0d9488', Medium: '#d97706', High: '#e85d5d' }
     )}
     ${checkboxGroup('region', 'Region',
       [...new Set(rows.map(r => r.Region))].sort(),

@@ -15,13 +15,13 @@ export function initHeatmap() {
   const container = document.getElementById('chart-heatmap');
   if (!container) return;
 
-  watchResize(container, () => drawHeatmap(container));
+  watchResize(container, ({ width }) => { if (width > 0) drawHeatmap(container); });
   on('filters:changed',     () => drawHeatmap(container));
   on('encode:changed',      () => drawHeatmap(container));
   on('reconfigure:changed', () => drawHeatmap(container));
   on('selection:changed',   () => applyHeatmapDimming(container));
 
-  drawHeatmap(container);
+  requestAnimationFrame(() => drawHeatmap(container));
 }
 
 function drawHeatmap(container) {
@@ -39,9 +39,9 @@ function drawHeatmap(container) {
   const colorScale = heatmapColorScale(d3, domain, metric);
 
   const rect = container.getBoundingClientRect();
-  const totalW = rect.width || 380;
+  const totalW = rect.width || container.offsetWidth || 380;
   const cellW  = Math.max(32, (totalW - MARGIN.left - MARGIN.right) / colKeys.length);
-  const cellH  = Math.max(22, Math.min(38, (Math.max(260, rect.height || 300) - MARGIN.top - MARGIN.bottom) / rowKeys.length));
+  const cellH  = Math.max(22, Math.min(38, (Math.max(260, rect.height || container.offsetHeight || 300) - MARGIN.top - MARGIN.bottom) / rowKeys.length));
   const width  = cellW * colKeys.length;
   const height = cellH * rowKeys.length;
 

@@ -12,9 +12,10 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  padding: var(--space-sm) var(--space-md) var(--space-md);
   position: relative;
   transition: border-color var(--transition);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .chart-panel--full {
@@ -57,12 +58,14 @@
 
 .chart-container {
   width: 100%;
-  min-height: 260px;
+  min-height: 220px;
+  height: 220px;
   position: relative;
 }
 
 .chart-panel--full .chart-container {
-  min-height: 220px;
+  min-height: 190px;
+  height: 190px;
 }
 
 /* SVG defaults */
@@ -180,7 +183,7 @@
 ════════════════════════════════════════════════════ */
 .d3-tooltip {
   position: fixed;
-  background: var(--bg-secondary);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
@@ -188,7 +191,7 @@
   z-index: 300;
   font-size: 0.8rem;
   max-width: 240px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
   line-height: 1.5;
   transition: opacity 100ms;
 }
@@ -324,10 +327,10 @@
   letter-spacing: 0.04em;
 }
 
-.risk-badge--low       { background: rgba(56,178,172,0.2);  color: var(--risk-low); }
-.risk-badge--moderate  { background: rgba(246,173,85,0.2);  color: var(--risk-moderate); }
-.risk-badge--high      { background: rgba(237,137,54,0.2);  color: var(--risk-high); }
-.risk-badge--very-high { background: rgba(252,129,129,0.2); color: var(--risk-very-high); }
+.risk-badge--low       { background: rgba(13,148,136,0.12);  color: var(--risk-low); }
+.risk-badge--moderate  { background: rgba(217,119,6,0.12);   color: var(--risk-moderate); }
+.risk-badge--high      { background: rgba(194,97,12,0.12);   color: var(--risk-high); }
+.risk-badge--very-high { background: rgba(232,93,93,0.12);   color: var(--risk-very-high); }
 
 /* Chart legend */
 .chart-legend {

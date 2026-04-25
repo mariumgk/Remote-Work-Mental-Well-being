@@ -33,12 +33,12 @@ export function initRegionalChart() {
     emit('reconfigure:changed', appState.reconfigure);
   });
 
-  watchResize(container, () => drawRegional(container));
+  watchResize(container, ({ width }) => { if (width > 0) drawRegional(container); });
   on('filters:changed',     () => drawRegional(container));
   on('reconfigure:changed', () => drawRegional(container));
   on('selection:changed',   () => applyRegionalDimming(container));
 
-  drawRegional(container);
+  requestAnimationFrame(() => drawRegional(container));
 }
 
 function drawRegional(container) {
@@ -53,8 +53,8 @@ function drawRegional(container) {
     : d3.max(data, d => d[metric]) * 1.15;
 
   const rect = container.getBoundingClientRect();
-  const W = (rect.width  || 380) - MARGIN.left - MARGIN.right;
-  const H = Math.max(180, (rect.height || 280) - MARGIN.top  - MARGIN.bottom);
+  const W = Math.max(200, (rect.width || container.offsetWidth || 380) - MARGIN.left - MARGIN.right);
+  const H = Math.max(180, (rect.height || container.offsetHeight || 280) - MARGIN.top  - MARGIN.bottom);
 
   d3.select(container).selectAll('*').remove();
 

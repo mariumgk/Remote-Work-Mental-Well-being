@@ -42,8 +42,8 @@ export function renderKpiGrid(kpi, container) {
     kpiCard(kpi.avgWLB ?? '—', 'Avg Work-Life Balance', 'Scale 1–5'),
     kpiCard(kpi.avgIsolation ?? '—', 'Avg Social Isolation', 'Scale 1–5'),
     kpiCard(`${kpi.accessYesPct ?? 0}%`, 'Mental Health Access', 'Have access to resources'),
-    kpiCard(`${kpi.veryHighRiskPct ?? 0}%`, 'Very High Risk', `Risk Score > 11`),
-    kpiCard(kpi.avgRiskScore ?? '—', 'Avg Risk Score', 'Scale 4–14')
+    kpiCard(`${kpi.veryHighRiskPct ?? 0}%`, 'Very High Risk', `Risk Score > 16`),
+    kpiCard(kpi.avgRiskScore ?? '—', 'Avg Risk Score', 'Scale 5–21')
   ].join('');
 }
 
@@ -102,7 +102,7 @@ export function renderConclusionCards(kpi, stats, container) {
   if (!container) return;
   container.innerHTML = `
     <div class="conclusion-card">
-      <div class="conclusion-card__icon">📍</div>
+      <div class="conclusion-card__icon conclusion-card__icon--teal">01</div>
       <div class="conclusion-card__title">Work Mode Distribution</div>
       <div class="conclusion-card__body">
         Remote: ${pct(kpi.remote||0, kpi.n||1)}% · Hybrid: ${pct(kpi.hybrid||0, kpi.n||1)}% · Onsite: ${pct(kpi.onsite||0, kpi.n||1)}%
@@ -110,15 +110,15 @@ export function renderConclusionCards(kpi, stats, container) {
       </div>
     </div>
     <div class="conclusion-card">
-      <div class="conclusion-card__icon">📊</div>
+      <div class="conclusion-card__icon conclusion-card__icon--coral">02</div>
       <div class="conclusion-card__title">Stress &amp; Risk Patterns</div>
       <div class="conclusion-card__body">
         ${kpi.highStressPct}% report high stress. ${kpi.veryHighRiskPct}% fall into the Very High Risk tier
-        (Risk Score > 11 across multiple wellbeing dimensions).
+        (Risk Score &gt; 16 across five wellbeing dimensions).
       </div>
     </div>
     <div class="conclusion-card">
-      <div class="conclusion-card__icon">🏥</div>
+      <div class="conclusion-card__icon conclusion-card__icon--amber">03</div>
       <div class="conclusion-card__title">Mental Health Resources</div>
       <div class="conclusion-card__body">
         ${kpi.accessYesPct}% of employees report having access to mental health resources.
@@ -126,7 +126,7 @@ export function renderConclusionCards(kpi, stats, container) {
       </div>
     </div>
     <div class="conclusion-card">
-      <div class="conclusion-card__icon">⚡</div>
+      <div class="conclusion-card__icon conclusion-card__icon--purple">04</div>
       <div class="conclusion-card__title">Company Support Association</div>
       <div class="conclusion-card__body">
         Employees with high company support (4–5) show avg WLB of ${stats.supportStats?.highSupportWLB ?? '—'} vs

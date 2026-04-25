@@ -51,18 +51,22 @@ export function processData(rawRows) {
     const Satisfaction_Score     = SATISFY_SCORE[r.Satisfaction_with_Remote_Work] ?? 2;
     const Productivity_Score     = PRODUCT_SCORE[r.Productivity_Change]           ?? 2;
 
-    // --- Composite risk score: range 4–14 ---
-    // higher = more risk across 4 dimensions
+    // --- Composite risk score: range 5–21 ---
+    // 5 components, higher = more risk
+    const Stress_Risk        = Stress_Score;                          // 1–3
+    const Work_Life_Balance_Risk = Math.max(0, 6 - wlb);             // 5→1, 1→5
+    const Isolation_Risk     = isolation;                             // 1–5
+    const Sleep_Risk         = 4 - Sleep_Quality_Score;              // Poor→3, Good→1
+    const Support_Risk       = Math.max(0, 6 - companySup);          // 1→5, 5→1
+
     const Risk_Score =
-      Stress_Score +                    // 1–3
-      (4 - wlb) +                       // 3 (bad) → 0 (good) — wlb 1→3, wlb 5→-1 clamped to 0
-      isolation +                       // 1–5
-      (4 - Sleep_Quality_Score);        // 3 (poor) → 1 (good)
+      Stress_Risk + Work_Life_Balance_Risk + Isolation_Risk +
+      Sleep_Risk + Support_Risk;                                      // range 5–21
 
     const Risk_Level =
-      Risk_Score <= 6  ? 'Low Risk'       :
-      Risk_Score <= 9  ? 'Moderate Risk'  :
-      Risk_Score <= 11 ? 'High Risk'      : 'Very High Risk';
+      Risk_Score <= 9  ? 'Low Risk'       :
+      Risk_Score <= 13 ? 'Moderate Risk'  :
+      Risk_Score <= 16 ? 'High Risk'      : 'Very High Risk';
 
     // --- Extreme-risk flag ---
     const High_Risk_Flag =
@@ -171,6 +175,11 @@ export function runEDA(rows) {
       });
     });
   });
+  // 10. Risk_Score range verification
+  const riskVals = rows.map(r => r.Risk_Score).filter(v => !isNaN(v));
+  riskVals.sort((a,b) => a-b);
+  console.log(`Risk_Score range: ${riskVals[0]}–${riskVals[riskVals.length-1]} (expected 5–21, 5-component formula)`);
+
   console.log(`Sankey min path count: ${minFlow} (should be >= 1 for all visible paths)`);
 
   console.groupEnd();
